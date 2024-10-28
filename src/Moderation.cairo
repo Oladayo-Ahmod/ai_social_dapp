@@ -5,12 +5,22 @@ pub trait IModeration<TContractState> {
 
 #[starknet::contract]
 mod Moderation {
+    use starknet::storage::{
+        StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map
+    };
+    use starknet::ContractAddress;
+    use starknet::get_caller_address;
+
+
+
     #[storage]
     struct Storage {
-        flags: Dict<felt252, u64>, // post_id -> flag count
-    }
+        flags: Map<felt252, u64>, // post_id -> flag count
+    } 
 
     #[event]
+    #[derive(Drop, starknet::Event)]
+
     enum Event {
         PostFlagged: PostFlagged,
         PostRemoved: PostRemoved,
@@ -33,11 +43,11 @@ mod Moderation {
     }
 
     #[abi(embed_v0)]
-    impl ModerationImpl of super::IModeration<ContractState> {
+    impl ModerationImpl of super::IModeration<ContractState> { 
         fn flag_post(ref self: ContractState, post_id: felt252) {
             let caller = get_caller_address();
-            let current_flags = self.flags.get(post_id).unwrap_or(0);
-            self.flags.insert(post_id, current_flags + 1);
+            let current_flags = self.flags.entry(post_id).read();
+            self.flags.entry(post_id).write(current_flags + 1);
             self.emit(PostFlagged { post_id, flagger: caller });
 
             // Remove post if flags reach a threshold (e.g., 10)
