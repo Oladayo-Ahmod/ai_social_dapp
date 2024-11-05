@@ -1,19 +1,20 @@
+use starknet::ContractAddress;
+
 #[starknet::interface]
 pub trait IPost<TContractState> {
     fn create_post(ref self: TContractState, content: felt252);
     fn like_post(ref self: TContractState, post_id: felt252);
     fn add_comment(ref self: TContractState, post_id: felt252, comment_id: felt252, comment: felt252);
+    fn get_post(ref self: TContractState, post_id: felt252) -> (ContractAddress, felt252, u64); // Retrieve post
 }
 
 #[starknet::contract]
 mod Post {
-    use starknet::ContractAddress;
     use starknet::get_caller_address;
+    use starknet::ContractAddress;
     use starknet::storage::{
-        StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map
-    };
-
-
+    StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map,
+};
     #[storage]
     struct Storage {
         posts: Map<felt252, (ContractAddress, felt252)>, // post_id -> (author, content)
@@ -64,7 +65,14 @@ mod Post {
             let post_id = self.posts_count.read() + 1; // post ID
             // Insert new post and emit event
             self.posts.entry(post_id).write((caller, content));
+            self.posts_count.write(post_id); // update post ID
             self.emit(PostCreated { post_id, author: caller, content });
+        }
+
+        fn get_post(ref self: ContractState, post_id: felt252) -> (ContractAddress, felt252, u64) {
+            let (author, content) = self.posts.entry(post_id).read();
+            let like_count = self.likes.entry(post_id).read();
+            (author, content, like_count)
         }
 
 

@@ -15,10 +15,14 @@ fn deploy_contract(name : ByteArray)->ContractAddress{
 fn test_create_post(){
     let contract_address = deploy_contract("Post");
     let dispatcher = IPostDispatcher {contract_address};
-
+    let caller = get_caller_address();
     // create post 
     dispatcher.create_post('a test');
 
     // retrieve post
-    // dispatcher.
+    let (author, content, like_count) = dispatcher.get_post(1);
+
+    // assertions
+    assert(content == 'a test', 'invalid content');
+    assert(like_count == 0, 'wrong likes count');
 }
