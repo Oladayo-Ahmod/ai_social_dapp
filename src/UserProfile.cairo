@@ -4,7 +4,7 @@ use starknet::ContractAddress;
 pub trait IUserProfile<TContractState> {
     fn register_user(ref self: TContractState, username: felt252, bio: felt252);
     fn update_profile(ref self: TContractState, username: felt252, bio: felt252);
-    fn get_user_profile(self: @TContractState, user_address: ContractAddress) -> (felt252, felt252);
+    fn get_user_profile(self: @TContractState) -> (felt252, felt252);
 }
 
 #[starknet::contract]
@@ -77,10 +77,11 @@ mod UserProfile {
             self.emit(ProfileUpdated { user: caller, username, bio });
         }
 
-        fn get_user_profile(self: @ContractState, user_address: ContractAddress) -> (felt252, felt252) {
+        fn get_user_profile(self: @ContractState) -> (felt252, felt252) {
+            let caller = get_caller_address();
              // Read username and bio from storage maps, return (0, 0) if not found
-             let username = self.usernames.entry(user_address).read();
-             let bio = self.bios.entry(user_address).read();
+             let username = self.usernames.entry(caller).read();
+             let bio = self.bios.entry(caller).read();
              (username, bio) // Return default if not found
         }
     }
