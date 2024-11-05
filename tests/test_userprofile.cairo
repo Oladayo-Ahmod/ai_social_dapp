@@ -41,8 +41,8 @@ fn test_update_profile(){
     dispatcher.update_profile('adunni','babe');
 
     // Retrieve the profile to confirm update
-   let (username, bio) = dispatcher.get_user_profile();
-   // Assertions
-   assert(username == 'adunni', 'Username should match');
-   assert(bio == 'babe', 'Bio should match');
+    let (username, bio) = dispatcher.get_user_profile();
+    // Assertions
+    assert(username == 'adunni', 'Username should match');
+    assert(bio == 'babe', 'Bio should match');
 }

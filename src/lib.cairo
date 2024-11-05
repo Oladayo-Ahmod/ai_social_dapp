@@ -1,3 +1,3 @@
 pub mod UserProfile;
-mod Post;
-mod Moderation;
+pub mod Post;
+pub mod Moderation;

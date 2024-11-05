@@ -1,6 +1,6 @@
 #[starknet::interface]
 pub trait IPost<TContractState> {
-    fn create_post(ref self: TContractState, post_id: felt252, content: felt252);
+    fn create_post(ref self: TContractState, content: felt252);
     fn like_post(ref self: TContractState, post_id: felt252);
     fn add_comment(ref self: TContractState, post_id: felt252, comment_id: felt252, comment: felt252);
 }
@@ -21,6 +21,7 @@ mod Post {
         post_comments: Map<(felt252, u64), felt252>,      // (post_id, index) -> comment_id
         comment_details: Map<felt252, (ContractAddress, felt252)>, // comment_id -> (commenter, comment)
         comment_counts: Map<felt252, u64>,    
+        posts_count : felt252,
     }
 
     #[event]
@@ -58,17 +59,14 @@ mod Post {
 
     #[abi(embed_v0)]
     impl PostImpl of super::IPost<ContractState> {
-        fn create_post(ref self: ContractState, post_id: felt252, content: felt252) {
+        fn create_post(ref self: ContractState, content: felt252) {
             let caller = get_caller_address();
-            // let existing_post = self.posts.entry(post_id).read();
-
-            // Check if post already exists by verifying default value
-            // assert(existing_post.0 == ContractAddress::default(), "Post already exists");
-
+            let post_id = self.posts_count.read() + 1; // post ID
             // Insert new post and emit event
             self.posts.entry(post_id).write((caller, content));
             self.emit(PostCreated { post_id, author: caller, content });
         }
+
 
         fn like_post(ref self: ContractState, post_id: felt252) {
             let caller = get_caller_address();

@@ -1,5 +1,3 @@
-use starknet::ContractAddress;
-
 #[starknet::interface]
 pub trait IUserProfile<TContractState> {
     fn register_user(ref self: TContractState, username: felt252, bio: felt252);
