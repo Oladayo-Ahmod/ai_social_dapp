@@ -1,9 +1,4 @@
 use starknet::ContractAddress;
-use starknet::get_caller_address;
-use starknet::storage::{
-    StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map
-};
-
 use snforge_std::{declare, ContractClassTrait, DeclareResultTrait};
 
 use social_ai::UserProfile::IUserProfileDispatcher;
@@ -20,10 +15,9 @@ fn deploy_contract(name : ByteArray)->ContractAddress{
 fn test_register_user(){
     let contract_address = deploy_contract("UserProfile");
     let dispatcher = IUserProfileDispatcher { contract_address};
-    let caller = get_caller_address();
    
-   // Register user with a username and bio
-   dispatcher.register_user('olami','lover');
+    // Register user with a username and bio
+    dispatcher.register_user('olami','lover');
 
    // Retrieve the profile to confirm registration
    let (username, bio) = dispatcher.get_user_profile();
@@ -37,4 +31,18 @@ fn test_register_user(){
 }
 
 #[test]
-fn test_update_
+fn test_update_profile(){
+    let contract_address = deploy_contract("UserProfile");
+    let dispatcher = IUserProfileDispatcher { contract_address};
+
+     // Register user with a username and bio
+    dispatcher.register_user('olami','lover');
+    // update user
+    dispatcher.update_profile('adunni','babe');
+
+    // Retrieve the profile to confirm update
+   let (username, bio) = dispatcher.get_user_profile();
+   // Assertions
+   assert(username == 'adunni', 'Username should match');
+   assert(bio == 'babe', 'Bio should match');
+}
