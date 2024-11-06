@@ -1,6 +1,7 @@
 #[starknet::interface]
 pub trait IModeration<TContractState> {
     fn flag_post(ref self: TContractState, post_id: felt252);
+    fn get_flag(ref self : TContractState, post_id : felt252)->u64;
 }
 
 #[starknet::contract]
@@ -55,6 +56,12 @@ mod Moderation {
                 // Logic to remove the post
                 self.emit(PostRemoved { post_id });
             }
+        }
+
+
+        fn get_flag(ref self: ContractState, post_id: felt252) -> u64 {
+            // Retrieve the current flag count for the post
+            self.flags.entry(post_id).read()
         }
     }
 }

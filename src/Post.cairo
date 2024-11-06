@@ -4,17 +4,18 @@ use starknet::ContractAddress;
 pub trait IPost<TContractState> {
     fn create_post(ref self: TContractState, content: felt252);
     fn like_post(ref self: TContractState, post_id: felt252);
-    fn add_comment(ref self: TContractState, post_id: felt252, comment_id: felt252, comment: felt252);
+    fn add_comment(ref self: TContractState, post_id: felt252, comment: felt252);
     fn get_post(ref self: TContractState, post_id: felt252) -> (ContractAddress, felt252, u64); // Retrieve post
+    fn get_comment(ref self : TContractState, post_id : felt252, index : u64)->(ContractAddress, felt252);
 }
 
-#[starknet::contract]
-mod Post {
-    use starknet::get_caller_address;
-    use starknet::ContractAddress;
-    use starknet::storage::{
-    StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map,
-};
+    #[starknet::contract]
+    mod Post {
+        use starknet::get_caller_address;
+        use starknet::ContractAddress;
+        use starknet::storage::{
+        StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map,
+    };
     #[storage]
     struct Storage {
         posts: Map<felt252, (ContractAddress, felt252)>, // post_id -> (author, content)
@@ -91,7 +92,7 @@ mod Post {
             self.emit(PostLiked { post_id, liker: caller });
         }
 
-        fn add_comment(ref self: ContractState, post_id: felt252, comment_id: felt252, comment: felt252) {
+        fn add_comment(ref self: ContractState, post_id: felt252, comment: felt252) {
             let caller = get_caller_address();
             // let existing_post = self.posts.entry(post_id).read();
 
@@ -100,6 +101,8 @@ mod Post {
           
             // Retrieve the current count of comments for this post and increment
             let current_count = self.comment_counts.entry(post_id).read();
+            let comment_id: felt252 = (current_count + 1).into();
+
             self.comment_counts.entry(post_id).write(current_count + 1);
 
             // Store the comment_id at the next available index in post_comments
@@ -110,6 +113,16 @@ mod Post {
 
             // Emit comment event
             self.emit(CommentAdded { post_id, comment_id, commenter: caller, comment });
+        }
+
+        fn get_comment(ref self : ContractState, post_id : felt252, index : u64)->(ContractAddress, felt252){
+            let commentId = self.post_comments.entry((post_id, index)).read();
+            
+            // Retrieve comment details using comment_id
+            let (commenter, comment) = self.comment_details.entry(commentId).read();
+
+            (commenter, comment)
+           
         }
     }
 }
