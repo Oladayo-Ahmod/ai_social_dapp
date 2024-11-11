@@ -1,4 +1,3 @@
-// Example function in a React component
 import { useState } from 'react';
 
 export default function AnalyzePost() {
