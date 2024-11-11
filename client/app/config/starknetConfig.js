@@ -1,9 +1,9 @@
 import { Provider, Contract, Account } from 'starknet';
 
-// contract's ABI here
+// contract's ABI 
 import moderationABI from '';
 
-// Configure provider and contract
+// provider and contract configurations
 const provider = new Provider({ sequencer: { network: 'goerli-alpha' } }); // 
 
 // contract address
