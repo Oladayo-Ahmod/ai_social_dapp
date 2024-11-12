@@ -1,4 +1,4 @@
-export const ABI = [
+[
     {
         "type": "impl",
         "name": "ModerationImpl",
@@ -89,4 +89,4 @@ export const ABI = [
             }
         ]
     }
-] as const
+]

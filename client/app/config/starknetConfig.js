@@ -1,7 +1,7 @@
 import { Provider, Contract, Account } from 'starknet';
 
-// contract's ABI 
-import moderationABI from '';
+// moderation contract's ABI 
+import moderationABI  from '../abis/moderationABI.json';
 
 // provider and contract configurations
 const provider = new Provider({ sequencer: { network: 'goerli-alpha' } }); // 
