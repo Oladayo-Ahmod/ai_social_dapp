@@ -14,13 +14,16 @@
     "@starknet-react/core": "3.0.0-beta.2",
     "@starknet-react/typescript-config": "0.0.0",
     "bootstrap": "^5.3.3",
+    "dotenv": "^16.4.5",
+    "fs": "^0.0.1-security",
     "get-starknet-core": "^4.0.0",
     "lodash": "^4.17.21",
     "next": "14.2.8",
     "openai": "^4.71.1",
     "react": "^18",
     "react-dom": "^18",
-    "starknet": "6.12.1"
+    "starknet": "6.12.1",
+    "ts-node": "^10.9.2"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.7",
