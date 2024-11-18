@@ -1,7 +1,10 @@
+"use client"
+
 import React, { useState } from 'react';
 import CreatePost from '../app/components/CreatePost';
 import PostList from '../app/components/PostList';
 import { connectWallet } from '../app/config/starknetConfig';
+import Wallet from '@/app/components/Wallet'
 
 export default function HomePage() {
   const [posts, setPosts] = useState([]);
@@ -26,11 +29,13 @@ export default function HomePage() {
 
   return (
     <div className="container">
-      <button className="btn btn-primary my-3" onClick={handleConnectWallet}>
+      {/* <button className="btn btn-primary my-3" onClick={handleConnectWallet}>
         Connect Wallet
-      </button>
-      <CreatePost onPostCreated={handlePostCreated} />
-      <PostList posts={posts} onLike={handleLike} onFlag={handleFlag} />
+      </button> */}
+
+        <Wallet />
+      {/* <CreatePost onPostCreated={handlePostCreated} />
+      <PostList posts={posts} onLike={handleLike} onFlag={handleFlag} /> */}
     </div>
   );
 }
