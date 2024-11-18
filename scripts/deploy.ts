@@ -3,12 +3,51 @@ import * as dotenv from "dotenv";
 import { getCompiledCode } from "./utils";
 dotenv.config();
 
+async function deployContract(
+  account: Account,
+  contractName: string,
+  provider: RpcProvider
+) {
+  let sierraCode, casmCode;
+
+  try {
+    ({ sierraCode, casmCode } = await getCompiledCode(contractName));
+  } catch (error: any) {
+    console.error(`Failed to read contract files for ${contractName}`);
+    process.exit(1);
+  }
+
+  const myCallData = new CallData(sierraCode.abi);
+  const constructor = myCallData.compile("constructor", {
+    // Add constructor parameters here if needed
+  });
+
+  const deployResponse = await account.declareAndDeploy({
+    contract: sierraCode,
+    casm: casmCode,
+    constructorCalldata: constructor,
+    salt: stark.randomAddress(),
+  });
+
+  const deployedContract = new Contract(
+    sierraCode.abi,
+    deployResponse.deploy.contract_address,
+    provider
+  );
+
+  console.log(
+    `✅ ${contractName} deployed at address: ${deployedContract.address}`
+  );
+
+  return deployedContract;
+}
+
 async function main() {
   const provider = new RpcProvider({
     nodeUrl: process.env.RPC_ENDPOINT,
   });
 
-  // initialize existing predeployed account 0
+  // Initialize existing predeployed account 0
   console.log("ACCOUNT_ADDRESS=", process.env.DEPLOYER_ADDRESS);
   console.log("ACCOUNT_PRIVATE_KEY=", process.env.DEPLOYER_PRIVATE_KEY);
   const privateKey0 = process.env.DEPLOYER_PRIVATE_KEY ?? "";
@@ -16,42 +55,21 @@ async function main() {
   const account0 = new Account(provider, accountAddress0, privateKey0);
   console.log("Account connected.\n");
 
-  // Declare & deploy contract
-  let sierraCode, casmCode;
+  // Contracts to deploy
+  const contractNames = [
+    "social_ai_Moderation",
+    "social_ai_Post",
+    "social_ai_UserProfile",
+  ];
 
-  try {
-    ({ sierraCode, casmCode } = await getCompiledCode(
-      "social_ai"
-    ));
-  } catch (error: any) {
-    console.log("Failed to read contract files");
-    process.exit(1);
+  for (const contractName of contractNames) {
+    console.log(`Deploying ${contractName}...`);
+    await deployContract(account0, contractName, provider);
   }
 
-  const myCallData = new CallData(sierraCode.abi);
-  const constructor = myCallData.compile("constructor", {
-    // initial_value: 94
-    // kill_switch:
-    //   "0x05f7151ea24624e12dde7e1307f9048073196644aa54d74a9c579a257214b542",
-    // initial_owner: process.env.DEPLOYER_ADDRESS ?? "",
-  });
-  const deployResponse = await account0.declareAndDeploy({
-    contract: sierraCode,
-    casm: casmCode,
-    constructorCalldata: constructor,
-    salt: stark.randomAddress(),
-  });
-
-  // Connect the new contract instance :
-  const myTestContract = new Contract(
-    sierraCode.abi,
-    deployResponse.deploy.contract_address,
-    provider
-  );
-  console.log(
-    `✅ Contract has been deploy with the address: ${myTestContract.address}`
-  );
+  console.log("\n🎉 All contracts deployed successfully!");
 }
+
 main()
   .then(() => process.exit(0))
   .catch((error) => {
