@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import CreatePost from '../app/components/CreatePost';
 import PostList from '../app/components/PostList';
 import { connectWallet } from '../app/config/starknetConfig';
-import { useAccount, useCall, useContract, useNetwork, useSendTransaction } from "@starknet-react/core";
+import { useAccount, useCall, useContract, useNetwork, useReadContract, useSendTransaction } from "@starknet-react/core";
 import { Abi } from "starknet";
 import { ABI } from './abis/postABI';
 
@@ -28,12 +28,23 @@ const POST_CONTRACT_ADDRESS = "0x627a2a34b062349646f04749bcc7106f31af32326806586
     address: POST_CONTRACT_ADDRESS,
   });
 
-  
+  // fetch posts
+  const { data: readData, refetch: dataRefetch, isError: readIsError, isLoading: readIsLoading, error: readError } = useReadContract({
+    functionName: "get_post",
+    args: [1],
+    abi: typedABI,
+    address: POST_CONTRACT_ADDRESS,
+    watch: true,
+    refetchInterval: 1000
+  });
+
+  console.log(readData,'data')
+
+  // create post
   const calls = useMemo(() => {
     if (!userAddress || !contract || !postContent) return [];
     return [contract.populate("create_post", [postContent])];
   }, [contract, userAddress, postContent]);
-
 
 
   const {
