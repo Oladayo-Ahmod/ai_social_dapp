@@ -7,27 +7,27 @@ const WalletBar = () => {
   const { address } = useAccount();
 
   return (
-    <div className="flex flex-col items-center space-y-4 bg-gray-50 p-6 rounded-lg shadow-md">
+    <div className="d-flex flex-column align-items-center p-4 bg-light border rounded shadow">
       {!address ? (
-        <div className="flex flex-wrap justify-center gap-2">
+        <div className="d-flex flex-wrap justify-content-center gap-2">
           {connectors.map((connector) => (
             <button
               key={connector.id}
               onClick={() => connect({ connector })}
-              className="border border-black text-black font-medium py-2 px-4 bg-yellow-300 hover:bg-yellow-500 transition-colors duration-200 rounded"
+              className="btn btn-warning text-dark fw-medium px-4 py-2 m-2"
             >
               Connect {connector.id}
             </button>
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center space-y-3">
-          <div className="text-sm bg-gray-200 px-4 py-2 rounded-md text-black">
+        <div className="d-flex flex-column align-items-center">
+          <div className="alert alert-secondary text-dark text-center fw-medium py-2 mb-3">
             Connected: {address.slice(0, 6)}...{address.slice(-4)}
           </div>
           <button
             onClick={() => disconnect()}
-            className="border border-black text-black font-medium py-2 px-4 bg-yellow-300 hover:bg-yellow-500 transition-colors duration-200 rounded"
+            className="btn btn-warning text-dark fw-medium px-4 py-2"
           >
             Disconnect
           </button>

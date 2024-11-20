@@ -1,22 +1,30 @@
-import React, { useState } from 'react';
+'use client';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useAccount, useBalance, useBlockNumber, useContract, useReadContract, useSendTransaction, useTransactionReceipt } from '@starknet-react/core';
+import { BlockNumber, Contract, RpcProvider } from "starknet";
+import { ABI } from '../abis/postABI';
+import { Abi } from "starknet";
+import { formatAmount, shortenAddress } from '../utils/helpers';
 
-export default function CreatePost({ onPostCreated }) {
+ const CreatePost=({ onPostCreated })=>{
   const [content, setContent] = useState('');
 
   const handleCreatePost = async () => {
-    const response = await fetch('/api/analyzePost', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content }),
-    });
-    const { analysis } = await response.json();
+   await  onPostCreated(content);
 
-    if (!analysis.includes("inappropriate")) {
-      onPostCreated(content);
-      setContent('');
-    } else {
-      alert("Content may violate platform rules.");
-    }
+    // const response = await fetch('/api/analyzePost', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({ content }),
+    // });
+    // const { analysis } = await response.json();
+
+    // if (!analysis.includes("inappropriate")) {
+    //   // onPostCreated(content);
+    //   setContent('');
+    // } else {
+    //   alert("Content may violate platform rules.");
+    // }
   };
 
   return (
@@ -33,3 +41,5 @@ export default function CreatePost({ onPostCreated }) {
     </div>
   );
 }
+
+export default CreatePost
