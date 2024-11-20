@@ -12,7 +12,7 @@ import { formatAmount, shortenAddress } from '../utils/helpers';
   const handleCreatePost = async () => {
     if(content.trim()){
       await onPostCreated(content);
-      setContent("")
+      // setContent("")
     }
 
     // const response = await fetch('/api/analyzePost', {

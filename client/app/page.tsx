@@ -76,8 +76,8 @@ const POST_CONTRACT_ADDRESS = "0x627a2a34b062349646f04749bcc7106f31af32326806586
         <Wallet />
       <CreatePost onPostCreated={handlePostCreated} />
       <div className="mt-4">
-      <p className={`alert ${writeIsPending ? "alert-warning" : "alert-success"} text-center`}>
-        {writeIsPending ? "Creating Post..." : "Post Created!"}
+      <p className={`alert ${writeIsPending ?? "alert-warning"} text-center`}>
+        {writeIsPending ?? "Creating Post..."}
       </p>
       {writeData && (
         <p className="alert alert-info text-center">
