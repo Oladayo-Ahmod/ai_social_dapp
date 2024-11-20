@@ -10,7 +10,10 @@ import { formatAmount, shortenAddress } from '../utils/helpers';
   const [content, setContent] = useState('');
 
   const handleCreatePost = async () => {
-   await  onPostCreated(content);
+    if(content.trim()){
+      await onPostCreated(content);
+      setContent("")
+    }
 
     // const response = await fetch('/api/analyzePost', {
     //   method: 'POST',

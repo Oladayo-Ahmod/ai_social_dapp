@@ -30,11 +30,11 @@ const POST_CONTRACT_ADDRESS = "0x627a2a34b062349646f04749bcc7106f31af32326806586
 
   
   const calls = useMemo(() => {
-    if (!userAddress || !contract) return [];
+    if (!userAddress || !contract || !postContent) return [];
     return [contract.populate("create_post", [postContent])];
   }, [contract, userAddress, postContent]);
 
-  if (!postContent) return
+
 
   const {
     send: writeAsync,
@@ -49,7 +49,8 @@ const POST_CONTRACT_ADDRESS = "0x627a2a34b062349646f04749bcc7106f31af32326806586
     if (account) alert("Wallet connected!");
   };
 
-  const handlePostCreated = (content: string) => {
+  const handlePostCreated = async(content: string) => {
+
     setPostContent(content)
 
     writeAsync()
@@ -74,6 +75,16 @@ const POST_CONTRACT_ADDRESS = "0x627a2a34b062349646f04749bcc7106f31af32326806586
 
         <Wallet />
       <CreatePost onPostCreated={handlePostCreated} />
+      <div className="mt-4">
+      <p className={`alert ${writeIsPending ? "alert-warning" : "alert-success"} text-center`}>
+        {writeIsPending ? "Creating Post..." : "Post Created!"}
+      </p>
+      {writeData && (
+        <p className="alert alert-info text-center">
+          Transaction Hash: {writeData.transaction_hash}
+        </p>
+      )}
+    </div>
       {/* <PostList posts={posts} onLike={handleLike} onFlag={handleFlag} />  */}
     </div>
   );
