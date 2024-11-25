@@ -4,10 +4,10 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import CreatePost from '../app/components/CreatePost';
 import PostList from '../app/components/PostList';
-import { connectWallet } from '../app/config/starknetConfig';
 import { useAccount, useCall, useContract, useNetwork, useReadContract, useSendTransaction } from "@starknet-react/core";
 import { Abi } from "starknet";
 import { ABI } from './abis/postABI';
+// import { isError } from 'lodash';
 
 
 const Wallet = dynamic(() => import('@/app/components/Wallet'), { ssr: false })
@@ -38,8 +38,11 @@ const POST_CONTRACT_ADDRESS = "0x627a2a34b062349646f04749bcc7106f31af32326806586
     refetchInterval: 1000
   });
 
-  console.log(readData,'data')
+  // if(readData){
+  //   console.log(readData,'data')
 
+  // }
+  // console.log(readIsError)
   // create post
   const calls = useMemo(() => {
     if (!userAddress || !contract || !postContent) return [];
@@ -55,11 +58,6 @@ const POST_CONTRACT_ADDRESS = "0x627a2a34b062349646f04749bcc7106f31af32326806586
     calls,
   });
 
-  const handleConnectWallet = async () => {
-    const account = await connectWallet();
-    if (account) alert("Wallet connected!");
-  };
-
   const handlePostCreated = async(content: string) => {
 
     setPostContent(content)
@@ -67,7 +65,7 @@ const POST_CONTRACT_ADDRESS = "0x627a2a34b062349646f04749bcc7106f31af32326806586
     writeAsync()
 
     const newPost = { id: posts.length + 1, author: "You", content };
-    // setPosts([newPost, ...posts]);
+    setPosts([newPost, ...posts]);
   };
 
   const handleLike = (postId) => {
